@@ -5,13 +5,15 @@ import BirthdayWelcome from "./BirthdayWelcome";
 
 function App() {
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<BirthdayWelcome />} />
-        <Route path="/birthday-wheel" element={<BirthdayWheel />} />
-      </Routes>
-    </div>
+    // Add Router with basename set to your repository name
+    <Router basename="/pp_birthday">
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<BirthdayWelcome />} />
+          <Route path="/birthday-wheel" element={<BirthdayWheel />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
-
 export default App;
