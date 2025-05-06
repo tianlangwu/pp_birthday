@@ -402,7 +402,9 @@ export default function BirthdayWelcome() {
             className="text-2xl text-pink-600 text-center max-w-md px-4"
             style={{ fontFamily: "'ZCOOL KuaiLe', sans-serif" }}
           >
-            {" 祝 wuli外星公主\n 欧皇附体不再非，谷子出手身价飞！"}
+            {"祝 wuli外星公主"}
+            <br />
+            {"欧皇附体不再非，谷子出手身价飞！"}
           </p>
 
           <Heart className="text-pink-500 mx-2 heart-beat" size={28} />
