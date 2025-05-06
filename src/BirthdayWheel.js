@@ -326,7 +326,7 @@ export default function BirthdayWheel() {
       {/* Main Content */}
 
       <div className="flex flex-col items-center justify-center min-h-screen p-5">
-        <h1 className="text-3xl font-bold text-pink-700 mb-6">
+        <h1 className="text-3xl font-bold text-pink-700 mb-6 mt-4">
           快乐星球 抽卡轮盘
         </h1>
 

@@ -349,7 +349,7 @@ export default function BirthdayWelcome() {
         />
       ))}
 
-      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80">
+      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80 px-[5%]">
         {/* 3D翻转卡片效果 */}
         <div
           className="relative mb-6 transform transition-all duration-1000 hover:rotate-y-180 cursor-pointer"
