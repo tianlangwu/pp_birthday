@@ -540,7 +540,7 @@ export default function BirthdayWheel() {
       {/* Card Pack Modal */}
       {showCardPack && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300 px-[5%]"
           onClick={toggleCardPack}
         >
           <div
