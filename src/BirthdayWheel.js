@@ -642,7 +642,7 @@ export default function BirthdayWheel() {
                 className="bg-blue-500 text-white px-3 py-1 rounded"
                 onClick={() => {
                   if (adminPassword === "20250506") {
-                    setRemainingSpins(remainingSpins + 10); // 你可以改成任意数量
+                    setRemainingSpins(remainingSpins + 1); // 你可以改成任意数量
                     setShowAdminPrompt(false);
                     setAdminPassword("");
                     setAdminError("");

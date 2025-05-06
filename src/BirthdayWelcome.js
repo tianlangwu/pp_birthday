@@ -414,7 +414,7 @@ export default function BirthdayWelcome() {
           className="px-12 py-5 text-2xl font-semibold bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 glow-button flex items-center"
         >
           <Gift className="mr-2" size={24} />
-          开起公主的生日小惊喜 ✨
+          开起生日小惊喜 ✨
         </button>
         {/* 装饰元素 - 带有更多动画 */}
         <div
