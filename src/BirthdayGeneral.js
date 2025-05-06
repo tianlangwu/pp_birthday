@@ -349,7 +349,7 @@ export default function BirthdayWelcome() {
         />
       ))}
 
-      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80">
+      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80 px-[5%]">
         {/* 3D翻转卡片效果 */}
         <div
           className="relative mb-6 transform transition-all duration-1000 hover:rotate-y-180 cursor-pointer"
@@ -365,7 +365,6 @@ export default function BirthdayWelcome() {
             ✨
           </div>
         </div>
-
         <h1
           className="text-5xl font-bold text-pink-600 mb-6 text-center px-4"
           style={{
@@ -375,6 +374,27 @@ export default function BirthdayWelcome() {
         >
           生日快乐！
         </h1>
+        <p
+          className="text-2xl text-pink-500 mb-6 text-center"
+          style={{
+            fontFamily: "'ZCOOL KuaiLe', cursive",
+          }}
+        >
+          {new Date().toLocaleDateString("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+        {/* <h4
+          className="text-5xl font-bold text-pink-600 mb-6 text-center px-4"
+          style={{
+            fontFamily: "'ZCOOL KuaiLe', cursive",
+            animation: "shine 2s ease-in-out infinite",
+          }}
+        >
+          欧皇附体不再非，谷子出手身价飞！
+        </h4> */}
 
         <div className="flex items-center justify-center mb-6">
           <Heart className="text-pink-500 mx-2 heart-beat" size={28} />
@@ -382,19 +402,20 @@ export default function BirthdayWelcome() {
             className="text-2xl text-pink-600 text-center max-w-md px-4"
             style={{ fontFamily: "'ZCOOL KuaiLe', sans-serif" }}
           >
-            今天是你的特别日子，准备好开启一天的惊喜了吗？
+            {"祝 wuli外星公主"}
+            <br />
+            {"欧皇附体不再非，谷子出手身价飞！"}
           </p>
+
           <Heart className="text-pink-500 mx-2 heart-beat" size={28} />
         </div>
-
         <button
           onClick={startGacha}
           className="px-12 py-5 text-2xl font-semibold bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 glow-button flex items-center"
         >
           <Gift className="mr-2" size={24} />
-          开始你的生日惊喜 ✨
+          开起生日小惊喜 ✨
         </button>
-
         {/* 装饰元素 - 带有更多动画 */}
         <div
           className="absolute top-10 left-10 text-5xl rotate"
@@ -423,7 +444,6 @@ export default function BirthdayWelcome() {
         >
           🥂
         </div>
-
         <div className="absolute top-1/4 left-1/4 heart-beat">
           <Star color="#FFD700" size={24} />
         </div>

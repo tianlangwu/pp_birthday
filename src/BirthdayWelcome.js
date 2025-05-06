@@ -7,6 +7,23 @@ export default function BirthdayWelcome() {
   const [showModal, setShowModal] = useState(false);
   const [balloons, setBalloons] = useState([]);
   const [stars, setStars] = useState([]);
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  });
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // 创建气球动画
   useEffect(() => {
@@ -57,7 +74,9 @@ export default function BirthdayWelcome() {
       "#ff5722",
       "#3f51b5",
     ];
-    for (let i = 0; i < 100; i++) {
+    const confettiCount = windowSize.width < 768 ? 50 : 100; // 移动端减少粒子数量
+
+    for (let i = 0; i < confettiCount; i++) {
       const confetti = document.createElement("div");
       confetti.className = "confetti";
       confetti.style.left = Math.random() * 100 + "vw";
@@ -116,6 +135,11 @@ export default function BirthdayWelcome() {
       navigate("/birthday-wheel");
     }, 3000);
   };
+
+  // 基于屏幕尺寸计算装饰元素的位置和大小
+  const isSmallScreen = windowSize.width < 768;
+  const decorationSize = isSmallScreen ? "text-3xl" : "text-5xl";
+  const edgeDistance = isSmallScreen ? 5 : 10;
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
@@ -349,24 +373,24 @@ export default function BirthdayWelcome() {
         />
       ))}
 
-      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80 px-[5%]">
+      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80 px-4 md:px-[5%]">
         {/* 3D翻转卡片效果 */}
         <div
           className="relative mb-6 transform transition-all duration-1000 hover:rotate-y-180 cursor-pointer"
           style={{ perspective: "1000px" }}
         >
           <div
-            className="text-8xl transform transition-transform duration-1000 hover:scale-110"
+            className="text-5xl md:text-8xl transform transition-transform duration-1000 hover:scale-110"
             style={{ animation: "float 3s ease-in-out infinite" }}
           >
             🎂
           </div>
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-8xl opacity-0 hover:opacity-100 transition-opacity duration-500">
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-5xl md:text-8xl opacity-0 hover:opacity-100 transition-opacity duration-500">
             ✨
           </div>
         </div>
         <h1
-          className="text-5xl font-bold text-pink-600 mb-6 text-center px-4"
+          className="text-3xl md:text-5xl font-bold text-pink-600 mb-4 md:mb-6 text-center px-2 md:px-4"
           style={{
             fontFamily: "'ZCOOL KuaiLe', cursive",
             animation: "shine 2s ease-in-out infinite",
@@ -375,7 +399,7 @@ export default function BirthdayWelcome() {
           生日快乐！
         </h1>
         <p
-          className="text-2xl text-pink-500 mb-6 text-center"
+          className="text-xl md:text-2xl text-pink-500 mb-4 md:mb-6 text-center"
           style={{
             fontFamily: "'ZCOOL KuaiLe', cursive",
           }}
@@ -386,40 +410,39 @@ export default function BirthdayWelcome() {
             day: "numeric",
           })}
         </p>
-        {/* <h4
-          className="text-5xl font-bold text-pink-600 mb-6 text-center px-4"
-          style={{
-            fontFamily: "'ZCOOL KuaiLe', cursive",
-            animation: "shine 2s ease-in-out infinite",
-          }}
-        >
-          欧皇附体不再非，谷子出手身价飞！
-        </h4> */}
 
-        <div className="flex items-center justify-center mb-6">
-          <Heart className="text-pink-500 mx-2 heart-beat" size={28} />
+        <div className="flex items-center justify-center mb-4 md:mb-6 px-2">
+          <Heart
+            className="text-pink-500 mx-2 heart-beat"
+            size={isSmallScreen ? 20 : 28}
+          />
           <p
-            className="text-2xl text-pink-600 text-center max-w-md px-4"
+            className="text-xl md:text-2xl text-pink-600 text-center max-w-md px-2 md:px-4"
             style={{ fontFamily: "'ZCOOL KuaiLe', sans-serif" }}
           >
             {"祝 wuli外星公主"}
             <br />
             {"欧皇附体不再非，谷子出手身价飞！"}
           </p>
-
-          <Heart className="text-pink-500 mx-2 heart-beat" size={28} />
+          <Heart
+            className="text-pink-500 mx-2 heart-beat"
+            size={isSmallScreen ? 20 : 28}
+          />
         </div>
         <button
           onClick={startGacha}
-          className="px-12 py-5 text-2xl font-semibold bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 glow-button flex items-center"
+          className="px-6 py-3 md:px-12 md:py-5 text-lg md:text-2xl font-semibold bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 glow-button flex items-center"
         >
-          <Gift className="mr-2" size={24} />
+          <Gift className="mr-2" size={isSmallScreen ? 20 : 24} />
           开起生日小惊喜 ✨
         </button>
-        {/* 装饰元素 - 带有更多动画 */}
+
+        {/* 装饰元素 - 带有更多动画 - 现在使用响应式定位 */}
         <div
-          className="absolute top-10 left-10 text-5xl rotate"
+          className={`absolute ${decorationSize}`}
           style={{
+            top: `${edgeDistance}%`,
+            left: `${edgeDistance}%`,
             animation:
               "float 4s ease-in-out infinite, rotate 8s linear infinite",
           }}
@@ -427,37 +450,58 @@ export default function BirthdayWelcome() {
           🎁
         </div>
         <div
-          className="absolute bottom-10 right-10 text-5xl"
-          style={{ animation: "float 3.5s ease-in-out infinite" }}
+          className={`absolute ${decorationSize}`}
+          style={{
+            bottom: `${edgeDistance}%`,
+            right: `${edgeDistance}%`,
+            animation: "float 3.5s ease-in-out infinite",
+          }}
         >
           🎈
         </div>
         <div
-          className="absolute top-10 right-10 text-5xl"
-          style={{ animation: "float 5s ease-in-out infinite" }}
+          className={`absolute ${decorationSize}`}
+          style={{
+            top: `${edgeDistance}%`,
+            right: `${edgeDistance}%`,
+            animation: "float 5s ease-in-out infinite",
+          }}
         >
           🎉
         </div>
         <div
-          className="absolute bottom-10 left-10 text-5xl"
-          style={{ animation: "float 4.5s ease-in-out infinite" }}
+          className={`absolute ${decorationSize}`}
+          style={{
+            bottom: `${edgeDistance}%`,
+            left: `${edgeDistance}%`,
+            animation: "float 4.5s ease-in-out infinite",
+          }}
         >
           🥂
         </div>
-        <div className="absolute top-1/4 left-1/4 heart-beat">
-          <Star color="#FFD700" size={24} />
-        </div>
-        <div className="absolute bottom-1/4 right-1/4 rotate">
-          <PartyPopper color="#FF1493" size={28} />
-        </div>
+
+        {/* 只在桌面端显示额外装饰 */}
+        {!isSmallScreen && (
+          <>
+            <div className="absolute top-1/4 left-1/4 heart-beat">
+              <Star color="#FFD700" size={24} />
+            </div>
+            <div className="absolute bottom-1/4 right-1/4 rotate">
+              <PartyPopper color="#FF1493" size={28} />
+            </div>
+          </>
+        )}
       </div>
 
       {/* 弹窗效果 */}
       {showModal && (
         <div className="modal-backdrop">
-          <div className="modal-content bg-white rounded-xl p-8 max-w-md text-center">
-            <PartyPopper className="mx-auto mb-4 text-pink-500" size={48} />
-            <h2 className="text-2xl font-bold text-pink-600 mb-4">
+          <div className="modal-content bg-white rounded-xl p-6 md:p-8 max-w-md mx-4 text-center">
+            <PartyPopper
+              className="mx-auto mb-4 text-pink-500"
+              size={isSmallScreen ? 36 : 48}
+            />
+            <h2 className="text-xl md:text-2xl font-bold text-pink-600 mb-3 md:mb-4">
               惊喜即将开始！
             </h2>
             <p className="text-gray-700 mb-2">正在为您准备生日大转盘...</p>
