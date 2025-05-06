@@ -1,19 +1,16 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import BirthdayWheel from "./BirthdayWheel";
+import { Routes, Route } from "react-router-dom";
 import BirthdayWelcome from "./BirthdayWelcome";
+import BirthdayWheel from "./BirthdayWheel";
 
 function App() {
   return (
-    // Add Router with basename set to your repository name
-    <Router basename="/pp_birthday">
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<BirthdayWelcome />} />
-          <Route path="/birthday-wheel" element={<BirthdayWheel />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<BirthdayWelcome />} />
+        <Route path="/birthday-wheel" element={<BirthdayWheel />} />
+      </Routes>
+    </div>
   );
 }
+
 export default App;
