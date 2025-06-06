@@ -7,7 +7,7 @@ const getAllImages = async () => {
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
 
   // 尝试加载图片，从1开始递增直到找不到为止
-  for (let i = 1; i <= 54; i++) {
+  for (let i = 1; i <= 53; i++) {
     // 最多尝试100张
     let found = false;
 
@@ -283,7 +283,7 @@ const RomanticSurprise = () => {
               </p>
 
               <button className="return-button" onClick={toggleUI}>
-                🏠 显示照片墙
+                💕 显示照片墙
               </button>
 
               {/* 飘落的爱心 */}
