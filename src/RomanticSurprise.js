@@ -1,43 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-// 1. 在组件顶部添加这个函数来获取所有图片
-const getAllImages = async () => {
-  const images = [];
-  const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
-
-  // 尝试加载图片，从1开始递增直到找不到为止
-  for (let i = 1; i <= 53; i++) {
-    // 最多尝试100张
-    let found = false;
-
-    for (const ext of imageExtensions) {
-      try {
-        const imagePath = `/pp_birthday/images/photo${i}.${ext}`;
-        console.log("Testing image:", imagePath);
-        // 测试图片是否存在
-        const response = await fetch(imagePath, { method: "HEAD" });
-        if (response.ok) {
-          images.push(imagePath);
-          found = true;
-          console.log("Image found:", imagePath);
-          break;
-        }
-      } catch (error) {
-        // console.log("Image not found:", error);
-        // 图片不存在，继续尝试下一个扩展名
-      }
-    }
-
-    // 如果连续5张图片都不存在，就停止搜索
-    if (!found) {
-      const consecutiveNotFound = i - images.length;
-      if (consecutiveNotFound > 5) break;
-    }
-  }
-
-  return images;
-};
+import { getAllImages } from "./methods";
 
 const RomanticSurprise = () => {
   const navigate = useNavigate();
@@ -47,6 +10,25 @@ const RomanticSurprise = () => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
   const [hideUI, setHideUI] = useState(false);
+
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [audioRef, setAudioRef] = useState(null);
+
+  useEffect(() => {
+    // 创建音频对象
+    const audio = new Audio("/pp_birthday/audio/世间始终你最好.mp3"); // 你需要将音乐文件放在这个路径
+    audio.loop = true; // 循环播放
+    audio.volume = 0.7; // 设置音量
+    setAudioRef(audio);
+
+    // 组件卸载时清理
+    return () => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    };
+  }, []);
 
   // 2. 修改 closeSurprise 函数，改名为 toggleUI
   const toggleUI = () => {
@@ -82,8 +64,8 @@ const RomanticSurprise = () => {
       const allImages = await getAllImages();
       if (allImages.length > 0) {
         // 随机打乱数组
-        const shuffledImages = [...allImages].sort(() => Math.random() - 0.5);
-        setPhotos(shuffledImages);
+        // const shuffledImages = [...allImages].sort(() => Math.random() - 0.5);
+        setPhotos(allImages);
       } else {
         // 如果没找到图片，使用默认图片
         setPhotos([
@@ -106,42 +88,90 @@ const RomanticSurprise = () => {
 
     const interval = setInterval(() => {
       setCurrentPhotoIndex((prev) => {
-        // 随机选择下一张图片（确保不是当前图片）
-        let nextIndex;
-        do {
-          nextIndex = Math.floor(Math.random() * photos.length);
-        } while (nextIndex === prev && photos.length > 1);
-
-        return nextIndex;
+        // 顺序切换：从 0 到 photos.length - 1，循环播放
+        return (prev + 1) % photos.length;
       });
-    }, 3000);
+    }, 3000); // 每 3 秒切换一张
 
     return () => clearInterval(interval);
   }, [photos.length]);
 
-  // 触发惊喜
+  //   useEffect(() => {
+  //   if (photos.length === 0) return;
+
+  //   const interval = setInterval(() => {
+  //     setCurrentPhotoIndex((prev) => {
+  //       // 随机选择下一张图片（确保不是当前图片）
+  //       let nextIndex;
+  //       do {
+  //         nextIndex = Math.floor(Math.random() * photos.length);
+  //       } while (nextIndex === prev && photos.length > 1);
+
+  //       return nextIndex;
+  //     });
+  //   }, 3000);
+
+  //   return () => clearInterval(interval);
+  // }, [photos.length]);
+
+  // 3. 修改 triggerSurprise 函数，添加音乐播放
   const triggerSurprise = () => {
     if (!surpriseMode) return;
 
     setShowSurprise(true);
     setAnimationStage(1);
 
-    // 动画序列
-    setTimeout(() => setAnimationStage(2), 2000); // 飞机飞行
-    setTimeout(() => setAnimationStage(3), 4000); // 降落
-    setTimeout(() => setAnimationStage(4), 5500); // 文字出现
-    setTimeout(() => setAnimationStage(5), 7000); // 最终惊喜
+    // 播放音乐
+    if (audioRef) {
+      audioRef
+        .play()
+        .then(() => {
+          setIsMusicPlaying(true);
+        })
+        .catch((error) => {
+          console.log("音频播放失败:", error);
+        });
+    }
 
-    // 移除自动返回功能，让用户停留在惊喜页面
+    // 动画序列
+    setTimeout(() => setAnimationStage(2), 2000);
+    setTimeout(() => setAnimationStage(3), 4000);
+    setTimeout(() => setAnimationStage(4), 5500);
+    setTimeout(() => setAnimationStage(5), 7000);
   };
 
-  // 返回首页函数
   const goBackHome = () => {
     setShowSurprise(false);
     setAnimationStage(0);
+
+    // 停止音乐
+    if (audioRef) {
+      audioRef.pause();
+      audioRef.currentTime = 0;
+      setIsMusicPlaying(false);
+    }
+
     navigate("/");
   };
 
+  // 5. 新增静音切换函数
+  const toggleMute = () => {
+    if (audioRef) {
+      if (isMusicPlaying) {
+        audioRef.pause();
+        setIsMusicPlaying(false);
+      } else {
+        audioRef
+          .play()
+          .then(() => {
+            setIsMusicPlaying(true);
+          })
+          .catch((error) => {
+            console.log("音频播放失败:", error);
+          });
+      }
+    }
+  };
   return (
     <div className="main-container">
       {/* 照片墙背景 */}
@@ -223,9 +253,8 @@ const RomanticSurprise = () => {
             <div className="photo-overlay surprise-photo-overlay" />
           </div>
 
-          {/* 关闭按钮 */}
-          <button className="close-button" onClick={goBackHome}>
-            x
+          <button className="mute-button" onClick={toggleMute}>
+            {isMusicPlaying ? "🔊" : "🔇"}
           </button>
 
           {/* 返回首页按钮（在惊喜界面） */}
@@ -314,6 +343,27 @@ const RomanticSurprise = () => {
           overflow: hidden;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             sans-serif;
+        }
+
+        .mute-button {
+          z-index: 9999;
+          position: absolute;
+          top: 5vw;
+          right: 5vw;
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          font-size: 6vw;
+          width: 12vw;
+          height: 10vw;
+          border-radius: 50%;
+          cursor: pointer;
+          backdrop-filter: blur(10px);
+          touch-action: manipulation;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
         }
 
         /* 照片墙背景 */
@@ -904,6 +954,13 @@ const RomanticSurprise = () => {
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
+          }
+
+          .mute-button {
+            width: 48px;
+            height: 40px;
+            font-size: 24px;
+            border-radius: 50%;
           }
 
           /* 按钮尺寸调整 */
