@@ -83,36 +83,36 @@ const RomanticSurprise = () => {
     console.log("photos:", photos);
   }, [photos]);
 
+  // useEffect(() => {
+  //   if (photos.length === 0) return;
+
+  //   const interval = setInterval(() => {
+  //     setCurrentPhotoIndex((prev) => {
+  //       // 顺序切换：从 0 到 photos.length - 1，循环播放
+  //       return (prev + 1) % photos.length;
+  //     });
+  //   }, 3000); // 每 3 秒切换一张
+
+  //   return () => clearInterval(interval);
+  // }, [photos.length]);
+
   useEffect(() => {
     if (photos.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentPhotoIndex((prev) => {
-        // 顺序切换：从 0 到 photos.length - 1，循环播放
-        return (prev + 1) % photos.length;
+        // 随机选择下一张图片（确保不是当前图片）
+        let nextIndex;
+        do {
+          nextIndex = Math.floor(Math.random() * photos.length);
+        } while (nextIndex === prev && photos.length > 1);
+
+        return nextIndex;
       });
-    }, 3000); // 每 3 秒切换一张
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [photos.length]);
-
-  //   useEffect(() => {
-  //   if (photos.length === 0) return;
-
-  //   const interval = setInterval(() => {
-  //     setCurrentPhotoIndex((prev) => {
-  //       // 随机选择下一张图片（确保不是当前图片）
-  //       let nextIndex;
-  //       do {
-  //         nextIndex = Math.floor(Math.random() * photos.length);
-  //       } while (nextIndex === prev && photos.length > 1);
-
-  //       return nextIndex;
-  //     });
-  //   }, 3000);
-
-  //   return () => clearInterval(interval);
-  // }, [photos.length]);
 
   // 3. 修改 triggerSurprise 函数，添加音乐播放
   const triggerSurprise = () => {
