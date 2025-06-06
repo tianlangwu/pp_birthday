@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Heart, Star, Gift, PartyPopper } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function BirthdayWelcome() {
   const navigate = useNavigate();
@@ -404,11 +405,7 @@ export default function BirthdayWelcome() {
             fontFamily: "'ZCOOL KuaiLe', cursive",
           }}
         >
-          {new Date().toLocaleDateString("zh-CN", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
+          2025年5月6号
         </p>
 
         <div className="flex items-center justify-center mb-4 md:mb-6 px-2">
@@ -436,6 +433,23 @@ export default function BirthdayWelcome() {
           <Gift className="mr-2" size={isSmallScreen ? 20 : 24} />
           开起生日小惊喜 ✨
         </button>
+
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <Link
+            to="/romantic-surprise"
+            style={{
+              padding: "10px 20px",
+              background: "linear-gradient(135deg, #ff9a9e, #fecfef)",
+              color: "#333",
+              textDecoration: "none",
+              borderRadius: "15px",
+              display: "inline-block",
+              boxShadow: "0 4px 15px rgba(255, 154, 158, 0.3)",
+            }}
+          >
+            ✨ 特别惊喜 25年6月9号限定版 ✨
+          </Link>
+        </div>
 
         {/* 装饰元素 - 带有更多动画 - 现在使用响应式定位 */}
         <div

@@ -44,6 +44,14 @@ export default function BirthdayWheel() {
   const [adminPassword, setAdminPassword] = useState("");
   const [adminError, setAdminError] = useState("");
 
+  // 新增：限定惊喜相关状态
+  const [surpriseMode, setSurpriseMode] = useState(false);
+  const [showSurprise, setShowSurprise] = useState(false);
+  const [animationStage, setAnimationStage] = useState(0);
+
+  // 检查是否为体验模式
+  const isExperienceMode = localStorage.getItem("EXPERIENCE_MODE") === "TRUE";
+
   // 新增：体验模式状态
   const [demoMode, setDemoMode] = useState(false);
 
@@ -104,12 +112,53 @@ export default function BirthdayWheel() {
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
+    const savedSurpriseMode = localStorage.getItem("SURPRISE_MODE");
+    if (savedSurpriseMode) {
+      setSurpriseMode(savedSurpriseMode === "true");
+    }
     localStorage.setItem("birthdayCardPack", JSON.stringify(cardPack));
   }, [cardPack]);
 
   useEffect(() => {
     localStorage.setItem("birthdayRemainingSpins", remainingSpins.toString());
   }, [remainingSpins]);
+
+  // 切换限定惊喜模式
+  const toggleSurpriseMode = () => {
+    const newMode = !surpriseMode;
+    setSurpriseMode(newMode);
+    localStorage.setItem("SURPRISE_MODE", newMode.toString());
+  };
+
+  // 触发惊喜动画
+  const triggerSurpriseAnimation = () => {
+    setShowSurprise(true);
+    setAnimationStage(1);
+
+    // 动画时序
+    setTimeout(() => setAnimationStage(2), 2000); // 飞机飞行
+    setTimeout(() => setAnimationStage(3), 4000); // 降落
+    setTimeout(() => setAnimationStage(4), 5500); // 卡片出现
+    setTimeout(() => setAnimationStage(5), 7000); // 最终惊喜
+  };
+
+  // 修改您现有的轮盘结果处理函数
+  const handleWheelResult = (normalResult) => {
+    // 如果开启了限定惊喜模式且在体验模式下
+    if (surpriseMode && isExperienceMode) {
+      // 触发惊喜动画而不是显示正常结果
+      triggerSurpriseAnimation();
+      return;
+    }
+
+    // 否则显示正常结果
+    // showNormalResult(normalResult);
+  };
+
+  const closeSurprise = () => {
+    setShowSurprise(false);
+    setAnimationStage(0);
+  };
 
   const spin = () => {
     // 允许在体验模式下无视剩余次数
