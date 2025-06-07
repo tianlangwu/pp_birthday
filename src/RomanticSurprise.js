@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllImages } from "./methods";
+import { getAllImages, messages } from "./methods";
 
 const RomanticSurprise = () => {
   const navigate = useNavigate();
@@ -8,11 +8,13 @@ const RomanticSurprise = () => {
   const [showSurprise, setShowSurprise] = useState(false);
   const [animationStage, setAnimationStage] = useState(0);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   const [hideUI, setHideUI] = useState(false);
 
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [audioRef, setAudioRef] = useState(null);
+  const [remainingIndices, setRemainingIndices] = useState([]);
 
   useEffect(() => {
     // 创建音频对象
@@ -30,10 +32,27 @@ const RomanticSurprise = () => {
     };
   }, []);
 
+  // 在现有的照片轮播 useEffect 后添加
+  useEffect(() => {
+    if (messages.length === 0 || !hideUI) return;
+
+    const interval = setInterval(() => {
+      setCurrentMessageIndex((prev) => {
+        return (prev + 1) % messages.length;
+      });
+    }, 5000); // 每3秒切换一条消息
+
+    return () => clearInterval(interval);
+  }, [messages.length, hideUI]);
+
   // 2. 修改 closeSurprise 函数，改名为 toggleUI
   const toggleUI = () => {
     // 切换UI显示状态
     setHideUI(!hideUI);
+
+    if (hideUI) {
+      setCurrentMessageIndex(0); // 重置到第一条消息
+    }
 
     // 动态修改照片墙的样式
     const photoWall = document.querySelector(".photo-wall");
@@ -62,6 +81,7 @@ const RomanticSurprise = () => {
   useEffect(() => {
     const initPhotos = async () => {
       const allImages = await getAllImages();
+      console.log("allImages:", allImages?.length);
       if (allImages.length > 0) {
         // 随机打乱数组
         // const shuffledImages = [...allImages].sort(() => Math.random() - 0.5);
@@ -97,22 +117,58 @@ const RomanticSurprise = () => {
   // }, [photos.length]);
 
   useEffect(() => {
-    if (photos.length === 0) return;
+    // 初始化剩余索引数组
+    if (photos.length > 0) {
+      setRemainingIndices(Array.from({ length: photos.length }, (_, i) => i));
+    }
+  }, [photos.length]);
+
+  useEffect(() => {
+    if (photos.length === 0 || remainingIndices.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentPhotoIndex((prev) => {
-        // 随机选择下一张图片（确保不是当前图片）
-        let nextIndex;
-        do {
-          nextIndex = Math.floor(Math.random() * photos.length);
-        } while (nextIndex === prev && photos.length > 1);
+      setRemainingIndices((prevRemaining) => {
+        if (prevRemaining.length === 0) return prevRemaining;
 
-        return nextIndex;
+        // 过滤掉当前索引
+        const availableIndices = prevRemaining.filter(
+          (index) => index !== currentPhotoIndex
+        );
+
+        if (availableIndices.length === 0) {
+          // 如果没有可用索引，重置为所有索引（除当前）
+          const allIndices = Array.from(
+            { length: photos.length },
+            (_, i) => i
+          ).filter((i) => i !== currentPhotoIndex);
+
+          if (allIndices.length > 0) {
+            const randomIndex = Math.floor(Math.random() * allIndices.length);
+            const nextIndex = allIndices[randomIndex];
+
+            setCurrentPhotoIndex(nextIndex);
+
+            // 返回除了新选择索引外的所有索引
+            return allIndices.filter((i) => i !== nextIndex);
+          }
+          return prevRemaining;
+        } else {
+          // 从可用索引中随机选择
+          const randomIndex = Math.floor(
+            Math.random() * availableIndices.length
+          );
+          const nextIndex = availableIndices[randomIndex];
+
+          setCurrentPhotoIndex(nextIndex);
+
+          // 从剩余索引中移除选择的索引
+          return availableIndices.filter((i) => i !== nextIndex);
+        }
       });
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [photos.length]);
+  }, [photos.length, remainingIndices.length, currentPhotoIndex]);
 
   // 3. 修改 triggerSurprise 函数，添加音乐播放
   const triggerSurprise = () => {
@@ -187,7 +243,7 @@ const RomanticSurprise = () => {
             }}
           />
         ))}
-        <div className="photo-overlay" onClick={toggleUI} />
+        <div className="photo-overlay" onClick={toggleUI}></div>
       </div>
 
       {/* 主要内容 */}
@@ -235,6 +291,11 @@ const RomanticSurprise = () => {
       </div>
 
       {/* 惊喜动画覆盖层 */}
+      {hideUI && (
+        <div className="message-display">
+          <div className="message-text">{messages[currentMessageIndex]}</div>
+        </div>
+      )}
       {showSurprise && (
         <div className="surprise-overlay">
           {/* 照片墙背景 - 惊喜页面也有 */}
@@ -343,6 +404,46 @@ const RomanticSurprise = () => {
           overflow: hidden;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             sans-serif;
+        }
+
+        .message-display {
+          position: absolute;
+          bottom: 15%;
+          left: 5%;
+          right: 5%;
+          z-index: 200010;
+          pointer-events: none;
+        }
+
+        .message-text {
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.7)
+          );
+          color: #333;
+          padding: 4vw 5vw;
+          border-radius: 4vw;
+          font-size: 4vw;
+          line-height: 1.6;
+          text-align: center;
+          box-shadow: 0 2vw 8vw rgba(0, 0, 0, 0.2);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          animation: messageSlideIn 0.5s ease-out;
+          font-weight: 500;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes messageSlideIn {
+          0% {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         .mute-button {
@@ -950,6 +1051,18 @@ const RomanticSurprise = () => {
         /* 响应式设计 - 完全替换原有的 @media (min-width: 768px) 部分 */
         @media (min-width: 768px) {
           /* 桌面端基础设置 */
+
+          .message-display {
+            bottom: 20%;
+            left: 10%;
+            right: 10%;
+          }
+
+          .message-text {
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 16px;
+          }
           .content-wrapper {
             padding: 20px;
             max-width: 800px;
@@ -1122,6 +1235,10 @@ const RomanticSurprise = () => {
 
         /* 添加大屏幕优化 */
         @media (min-width: 1200px) {
+          .message-display {
+            left: 20%;
+            right: 20%;
+          }
           .content-wrapper {
             max-width: 1000px;
           }
