@@ -116,59 +116,53 @@ const RomanticSurprise = () => {
   //   return () => clearInterval(interval);
   // }, [photos.length]);
 
+  // 初始化剩余索引数组
   useEffect(() => {
-    // 初始化剩余索引数组
     if (photos.length > 0) {
-      setRemainingIndices(Array.from({ length: photos.length }, (_, i) => i));
+      const allIndices = Array.from({ length: photos.length }, (_, i) => i);
+      setRemainingIndices(allIndices.filter((i) => i !== currentPhotoIndex));
     }
   }, [photos.length]);
 
   useEffect(() => {
-    if (photos.length === 0 || remainingIndices.length === 0) return;
+    if (photos.length === 0) return;
 
     const interval = setInterval(() => {
       setRemainingIndices((prevRemaining) => {
-        if (prevRemaining.length === 0) return prevRemaining;
+        // 如果没有剩余索引了，开始新的一轮
+        if (prevRemaining.length === 0) {
+          // 重置为所有索引（除当前索引）
+          const allIndices = Array.from({ length: photos.length }, (_, i) => i);
+          const newRemaining = allIndices.filter(
+            (i) => i !== currentPhotoIndex
+          );
 
-        // 过滤掉当前索引
-        const availableIndices = prevRemaining.filter(
-          (index) => index !== currentPhotoIndex
-        );
-
-        if (availableIndices.length === 0) {
-          // 如果没有可用索引，重置为所有索引（除当前）
-          const allIndices = Array.from(
-            { length: photos.length },
-            (_, i) => i
-          ).filter((i) => i !== currentPhotoIndex);
-
-          if (allIndices.length > 0) {
-            const randomIndex = Math.floor(Math.random() * allIndices.length);
-            const nextIndex = allIndices[randomIndex];
+          if (newRemaining.length > 0) {
+            // 从新一轮中随机选择第一张
+            const randomIndex = Math.floor(Math.random() * newRemaining.length);
+            const nextIndex = newRemaining[randomIndex];
 
             setCurrentPhotoIndex(nextIndex);
 
-            // 返回除了新选择索引外的所有索引
-            return allIndices.filter((i) => i !== nextIndex);
+            // 返回剩余的索引（移除刚选择的）
+            return newRemaining.filter((i) => i !== nextIndex);
           }
-          return prevRemaining;
+          return [];
         } else {
-          // 从可用索引中随机选择
-          const randomIndex = Math.floor(
-            Math.random() * availableIndices.length
-          );
-          const nextIndex = availableIndices[randomIndex];
+          // 还有剩余索引，从中随机选择
+          const randomIndex = Math.floor(Math.random() * prevRemaining.length);
+          const nextIndex = prevRemaining[randomIndex];
 
           setCurrentPhotoIndex(nextIndex);
 
           // 从剩余索引中移除选择的索引
-          return availableIndices.filter((i) => i !== nextIndex);
+          return prevRemaining.filter((i) => i !== nextIndex);
         }
       });
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [photos.length, remainingIndices.length, currentPhotoIndex]);
+  }, [photos.length, currentPhotoIndex]);
 
   // 3. 修改 triggerSurprise 函数，添加音乐播放
   const triggerSurprise = () => {
@@ -231,7 +225,7 @@ const RomanticSurprise = () => {
   return (
     <div className="main-container">
       {/* 照片墙背景 */}
-      <div className="photo-wall">
+      {/* <div className="photo-wall">
         {photos.map((photo, index) => (
           <div
             key={index}
@@ -244,7 +238,7 @@ const RomanticSurprise = () => {
           />
         ))}
         <div className="photo-overlay" onClick={toggleUI}></div>
-      </div>
+      </div> */}
 
       {/* 主要内容 */}
       <div className="content-wrapper">
@@ -509,6 +503,7 @@ const RomanticSurprise = () => {
         }
 
         /* 主要内容 */
+        /* 原有的 content-wrapper 样式替换为以下内容 */
         .content-wrapper {
           position: relative;
           z-index: 1;
@@ -516,6 +511,44 @@ const RomanticSurprise = () => {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
+
+          /* 添加背景渐变 */
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 154, 158, 0.1) 50%,
+            rgba(254, 207, 239, 0.1) 75%,
+            rgba(255, 255, 255, 0.05) 100%
+          );
+
+          /* 添加毛玻璃效果 */
+          backdrop-filter: blur(10px);
+
+          /* 添加边框 */
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 3vw;
+
+          /* 添加阴影 */
+          box-shadow: 0 2vw 8vw rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+          /* 添加动画效果 */
+          animation: contentWrapperGlow 4s ease-in-out infinite alternate;
+        }
+
+        /* 动画定义 */
+        @keyframes contentWrapperGlow {
+          0% {
+            box-shadow: 0 2vw 8vw rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2),
+              0 0 2vw rgba(255, 154, 158, 0.2);
+          }
+          100% {
+            box-shadow: 0 3vw 12vw rgba(0, 0, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              0 0 4vw rgba(254, 207, 239, 0.3);
+          }
         }
 
         .header-buttons {
@@ -1067,6 +1100,7 @@ const RomanticSurprise = () => {
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
+            border-radius: 15px;
           }
 
           .mute-button {
