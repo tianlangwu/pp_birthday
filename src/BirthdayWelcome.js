@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import { Heart, Star, Gift, PartyPopper } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 export default function BirthdayWelcome() {
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [balloons, setBalloons] = useState([]);
   const [stars, setStars] = useState([]);
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
@@ -26,30 +22,8 @@ export default function BirthdayWelcome() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 创建气球动画
+  // 创建星星动画
   useEffect(() => {
-    const newBalloons = [];
-    const colors = [
-      "bg-pink-500",
-      "bg-blue-400",
-      "bg-purple-500",
-      "bg-yellow-400",
-      "bg-green-400",
-    ];
-
-    for (let i = 0; i < 15; i++) {
-      newBalloons.push({
-        id: i,
-        left: `${Math.random() * 100}vw`,
-        delay: Math.random() * 5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        size: Math.random() * 20 + 30,
-      });
-    }
-
-    setBalloons(newBalloons);
-
-    // 创建星星动画
     const newStars = [];
     for (let i = 0; i < 30; i++) {
       newStars.push({
@@ -75,7 +49,7 @@ export default function BirthdayWelcome() {
       "#ff5722",
       "#3f51b5",
     ];
-    const confettiCount = windowSize.width < 768 ? 50 : 100; // 移动端减少粒子数量
+    const confettiCount = windowSize.width < 768 ? 50 : 100;
 
     for (let i = 0; i < confettiCount; i++) {
       const confetti = document.createElement("div");
@@ -85,15 +59,13 @@ export default function BirthdayWelcome() {
         colors[Math.floor(Math.random() * colors.length)];
       confetti.style.opacity = Math.random() + 0.5;
 
-      // 多样化的形状
       const shapeType = Math.floor(Math.random() * 3);
       if (shapeType === 0) {
-        confetti.style.borderRadius = "50%"; // 圆形
+        confetti.style.borderRadius = "50%";
       } else if (shapeType === 1) {
         confetti.style.width = Math.random() * 8 + 5 + "px";
         confetti.style.height = Math.random() * 8 + 5 + "px";
       } else {
-        // 星形
         confetti.style.clipPath =
           "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
         confetti.style.width = Math.random() * 12 + 8 + "px";
@@ -129,15 +101,12 @@ export default function BirthdayWelcome() {
     createConfetti();
     setShowModal(true);
 
-    // 模拟跳转，这里只是示例
     setTimeout(() => {
       setShowModal(false);
-      // 在实际应用中，这里应该是 navigate("/birthday-wheel");
-      navigate("/birthday-wheel");
+      // 可以在这里添加其他导航逻辑
     }, 3000);
   };
 
-  // 基于屏幕尺寸计算装饰元素的位置和大小
   const isSmallScreen = windowSize.width < 768;
   const decorationSize = isSmallScreen ? "text-3xl" : "text-5xl";
   const edgeDistance = isSmallScreen ? 5 : 10;
@@ -193,15 +162,6 @@ export default function BirthdayWelcome() {
           }
         }
 
-        @keyframes balloon-float {
-          0% {
-            transform: translateY(100vh) rotate(0deg);
-          }
-          100% {
-            transform: translateY(-20vh) rotate(10deg);
-          }
-        }
-
         @keyframes star-twinkle {
           0% {
             opacity: 0.2;
@@ -242,27 +202,6 @@ export default function BirthdayWelcome() {
           to {
             transform: rotate(360deg);
           }
-        }
-
-        .balloon {
-          position: fixed;
-          bottom: 0;
-          animation-name: balloon-float;
-          animation-duration: 10s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          z-index: 5;
-        }
-
-        .balloon::before {
-          content: "";
-          position: absolute;
-          width: 6px;
-          height: 50px;
-          background: rgba(0, 0, 0, 0.2);
-          bottom: -50px;
-          left: 50%;
-          transform: translateX(-50%);
         }
 
         .star {
@@ -341,6 +280,11 @@ export default function BirthdayWelcome() {
         .modal-content {
           animation: scaleIn 0.5s ease;
         }
+
+        /* 自定义背景覆盖层，确保动画可见 */
+        .custom-bg-overlay {
+          background: rgba(252, 231, 243, 0.6) !important;
+        }
       `}</style>
 
       {/* 背景星星 */}
@@ -359,23 +303,7 @@ export default function BirthdayWelcome() {
         />
       ))}
 
-      {/* 气球 */}
-      {balloons.map((balloon) => (
-        <div
-          key={balloon.id}
-          className={`balloon ${balloon.color} rounded-full`}
-          style={{
-            left: balloon.left,
-            width: balloon.size,
-            height: 1.3 * balloon.size,
-            animationDelay: `${balloon.delay}s`,
-            animationDuration: `${10 + balloon.delay * 2}s`,
-          }}
-        />
-      ))}
-
-      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 bg-gradient-to-br from-pink-100 to-blue-100 bg-opacity-80 px-4 md:px-[5%]">
-        {/* 3D翻转卡片效果 */}
+      <div className="fixed inset-0 flex flex-col items-center justify-center z-20 custom-bg-overlay px-4 md:px-[5%]">
         <div
           className="relative mb-6 transform transition-all duration-1000 hover:rotate-y-180 cursor-pointer"
           style={{ perspective: "1000px" }}
@@ -390,6 +318,7 @@ export default function BirthdayWelcome() {
             ✨
           </div>
         </div>
+
         <h1
           className="text-3xl md:text-5xl font-bold text-pink-600 mb-4 md:mb-6 text-center px-2 md:px-4"
           style={{
@@ -399,6 +328,7 @@ export default function BirthdayWelcome() {
         >
           生日快乐！
         </h1>
+
         <p
           className="text-xl md:text-2xl text-pink-500 mb-4 md:mb-6 text-center"
           style={{
@@ -426,6 +356,7 @@ export default function BirthdayWelcome() {
             size={isSmallScreen ? 20 : 28}
           />
         </div>
+
         <button
           onClick={startGacha}
           className="px-6 py-3 md:px-12 md:py-5 text-lg md:text-2xl font-semibold bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 glow-button flex items-center"
@@ -435,8 +366,12 @@ export default function BirthdayWelcome() {
         </button>
 
         <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <Link
-            to="/romantic-surprise"
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              alert("特别惊喜页面即将到来！");
+            }}
             style={{
               padding: "10px 20px",
               background: "linear-gradient(135deg, #ff9a9e, #fecfef)",
@@ -448,10 +383,10 @@ export default function BirthdayWelcome() {
             }}
           >
             ✨ 特别惊喜 25年6月9号限定版 ✨
-          </Link>
+          </a>
         </div>
 
-        {/* 装饰元素 - 带有更多动画 - 现在使用响应式定位 */}
+        {/* 装饰元素 */}
         <div
           className={`absolute ${decorationSize}`}
           style={{
@@ -494,7 +429,6 @@ export default function BirthdayWelcome() {
           🥂
         </div>
 
-        {/* 只在桌面端显示额外装饰 */}
         {!isSmallScreen && (
           <>
             <div className="absolute top-1/4 left-1/4 heart-beat">

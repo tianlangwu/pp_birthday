@@ -476,8 +476,6 @@ const RomanticSurprise = () => {
           backdrop-filter: blur(3px);
         }
 
-        /* 主要内容 */
-        /* 原有的 content-wrapper 样式替换为以下内容 */
         .content-wrapper {
           position: relative;
           z-index: 1;
@@ -485,45 +483,6 @@ const RomanticSurprise = () => {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
-
-          /* 添加背景渐变 */
-          background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.1) 0%,
-            rgba(255, 255, 255, 0.05) 25%,
-            rgba(255, 154, 158, 0.1) 50%,
-            rgba(254, 207, 239, 0.1) 75%,
-            rgba(255, 255, 255, 0.05) 100%
-          );
-
-          /* 添加毛玻璃效果 */
-          backdrop-filter: blur(10px);
-
-          /* 添加边框 */
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 3vw;
-
-          /* 添加阴影 */
-          box-shadow: 0 2vw 8vw rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
-          /* 添加动画效果 */
-          animation: contentWrapperGlow 4s ease-in-out infinite alternate;
-        }
-
-        /* 动画定义 */
-        @keyframes contentWrapperGlow {
-          0% {
-            box-shadow: 0 2vw 8vw rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2),
-              0 0 2vw rgba(255, 154, 158, 0.2);
-          }
-          100% {
-            box-shadow: 0 3vw 12vw rgba(0, 0, 0, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3),
-              0 0 4vw rgba(254, 207, 239, 0.3);
-          }
-        }
 
         .header-buttons {
           margin-bottom: 5vw;
