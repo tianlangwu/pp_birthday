@@ -4,7 +4,7 @@ import { getAllImages, messages } from "./methods";
 
 const RomanticSurprise = () => {
   const navigate = useNavigate();
-  const [surpriseMode, setSurpriseMode] = useState(false);
+  const [surpriseMode, setSurpriseMode] = useState(true);
   const [showSurprise, setShowSurprise] = useState(false);
   const [animationStage, setAnimationStage] = useState(0);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -14,7 +14,6 @@ const RomanticSurprise = () => {
 
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [audioRef, setAudioRef] = useState(null);
-  const [remainingIndices, setRemainingIndices] = useState([]);
 
   useEffect(() => {
     // 创建音频对象
@@ -116,53 +115,28 @@ const RomanticSurprise = () => {
   //   return () => clearInterval(interval);
   // }, [photos.length]);
 
-  // 初始化剩余索引数组
-  useEffect(() => {
-    if (photos.length > 0) {
-      const allIndices = Array.from({ length: photos.length }, (_, i) => i);
-      setRemainingIndices(allIndices.filter((i) => i !== currentPhotoIndex));
-    }
-  }, [photos.length]);
-
   useEffect(() => {
     if (photos.length === 0) return;
 
     const interval = setInterval(() => {
-      setRemainingIndices((prevRemaining) => {
-        // 如果没有剩余索引了，开始新的一轮
-        if (prevRemaining.length === 0) {
-          // 重置为所有索引（除当前索引）
-          const allIndices = Array.from({ length: photos.length }, (_, i) => i);
-          const newRemaining = allIndices.filter(
-            (i) => i !== currentPhotoIndex
-          );
+      setCurrentPhotoIndex((prevIndex) => {
+        // 获取除当前索引外的所有索引
+        const allIndices = Array.from({ length: photos.length }, (_, i) => i);
+        const availableIndices = allIndices.filter((i) => i !== prevIndex);
 
-          if (newRemaining.length > 0) {
-            // 从新一轮中随机选择第一张
-            const randomIndex = Math.floor(Math.random() * newRemaining.length);
-            const nextIndex = newRemaining[randomIndex];
-
-            setCurrentPhotoIndex(nextIndex);
-
-            // 返回剩余的索引（移除刚选择的）
-            return newRemaining.filter((i) => i !== nextIndex);
-          }
-          return [];
-        } else {
-          // 还有剩余索引，从中随机选择
-          const randomIndex = Math.floor(Math.random() * prevRemaining.length);
-          const nextIndex = prevRemaining[randomIndex];
-
-          setCurrentPhotoIndex(nextIndex);
-
-          // 从剩余索引中移除选择的索引
-          return prevRemaining.filter((i) => i !== nextIndex);
+        // 如果没有其他照片可选择，就顺序切换到下一张
+        if (availableIndices.length === 0) {
+          return (prevIndex + 1) % photos.length;
         }
+
+        // 从可用索引中随机选择
+        const randomIndex = Math.floor(Math.random() * availableIndices.length);
+        return availableIndices[randomIndex];
       });
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [photos.length, currentPhotoIndex]);
+  }, [photos.length]);
 
   // 3. 修改 triggerSurprise 函数，添加音乐播放
   const triggerSurprise = () => {
